@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+  "http://image1.dcbook.com/static_root/dtd/sql-map-2.dtd">
+  
+<sqlMap namespace="CodeManager">
+
+  
+	<select id="getCodeList" parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+		/*getCodeList*/			  
+		<![CDATA[
+	
+		SELECT
+			CODE,
+			CODENM,
+			UPER_CODE,
+			DLTE_YN,
+			CODE_EXPL
+			
+			FROM YIVMT_CODE
+		]]>		
+				
+				<dynamic prepend="WHERE">							
+					<isNotEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE = #UPER_CODE#
+		
+						]]>				
+					</isNotEmpty>
+					<isEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE IS NULL
+						]]>				
+					</isEmpty>
+				</dynamic>
+			
+			ORDER BY EXPS_ORDR
+		    
+		
+			
+		</select>
+			
+		<!-- 상세조회 -->
+		<select id="getCodeView"    parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			/* getCodeView */
+			<![CDATA[
+				
+			    SELECT 
+					   	CODE,
+						CODENM,
+						UPER_CODE,
+						CODE_DEPTH,
+						EXPS_ORDR,
+						DLTE_YN,
+						CODE_EXPL
+						
+				       
+				  FROM YIVMT_CODE
+				  WHERE CODE = #CODE#
+			]]>		
+			
+				
+				
+			
+		</select>
+		
+		<update id="codeManagerEdit" parameterClass="java.util.HashMap">
+			/* codeManagerEdit */
+			<![CDATA[			
+				UPDATE 
+						YIVMT_CODE				
+				SET	
+					
+					CODENM 		= #CODENM#, 
+					DLTE_YN 		= #DLTE_YN#, 
+					CODE_EXPL 		= #CODE_EXPL#, 
+					MODYMD 		= SYSDATE,
+					MODUSER 	= #MODUSER#
+					
+					WHERE CODE 		= #CODE#
+			]]>			
+		</update>	
+		
+	
+	  
+		
+		<insert id="codeManagerInsert"  parameterClass="java.util.HashMap">
+		/* codeInsert */
+				
+			INSERT INTO YIVMT_CODE 
+	       ( 
+	           CODE,
+		       CODENM,
+		       UPER_CODE,
+		       CODE_DEPTH,
+		       REGYMD,
+		       REGUSER,
+		       EXPS_ORDR,
+		       DLTE_YN,
+		       CODE_EXPL
+	       ) 
+	       VALUES 
+	       ( 
+	           #CODE#,
+	           #CODENM#,
+	           #UPER_CODE#,
+	           #CODE_DEPTH#,
+	           SYSDATE,
+	           #REGUSER#,
+	           #EXPS_ORDR#,
+	           #DLTE_YN#,
+	           #CODE_EXPL# 
+	       ) 
+		</insert>
+		
+		<update id="codeOrderEdit" parameterClass="java.util.HashMap">
+			/* codeOrderEdit */
+			<![CDATA[
+				UPDATE 
+						YIVMT_CODE				
+				SET
+						EXPS_ORDR 	= #EXPS_ORDR#
+				WHERE 	CODE =  #CODE#
+			]]>
+		</update>
+		
+		<select id="getMaxOrder"    parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			/*getMaxOrder*/		
+				  
+		<![CDATA[
+	
+		SELECT NVL(MAX(EXPS_ORDR), 0) + 1 AS MAX_ORDER
+			FROM YIVMT_CODE
+		]]>		
+				
+				<dynamic prepend="WHERE">							
+					<isNotEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE = #UPER_CODE#
+		
+						]]>				
+					</isNotEmpty>
+					<isEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE IS NULL
+						]]>				
+					</isEmpty>
+				</dynamic>
+			
+	    </select>
+	    <select id="existCode"    parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			/*existCode*/		
+		<![CDATA[
+				
+		SELECT COUNT(CODE) AS CODE_CNT
+			FROM YIVMT_CODE
+				WHERE CODE = #CODE#
+				
+			]]>			  
+	
+			
+	    </select>
+	
+	<select id="newsCodeTree" parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			<![CDATA[
+			SELECT
+			  COMMON_CODE,
+			  PARENT_COMMON_CODE,
+			  COMMON_CODE_NAME,
+			  COMMON_CODE_DESC,
+			  COMMON_CODE_ORDER,
+			  LEVEL
+			FROM YIVMT_NEWS_CODE
+			START WITH PARENT_COMMON_CODE = 100071
+			CONNECT BY PRIOR COMMON_CODE = PARENT_COMMON_CODE
+			ORDER SIBLINGS BY COMMON_CODE_ORDER
+			]]>
+	</select>
+	
+	<select id="newsCodeItem" parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+		<![CDATA[
+		SELECT
+			  COMMON_CODE,
+			  PARENT_COMMON_CODE,
+			  COMMON_CODE_NAME,
+			  COMMON_CODE_DESC,
+			  COMMON_CODE_ORDER,
+			  USE_YN,
+			  EXT_ATTRIBUTE01,
+			  EXT_ATTRIBUTE02,
+			  EXT_ATTRIBUTE03,
+			  EXT_ATTRIBUTE04,
+			  EXT_ATTRIBUTE05,
+			  EXT_ATTRIBUTE06,
+			  EXT_ATTRIBUTE07,
+			  EXT_ATTRIBUTE08,
+			  EXT_ATTRIBUTE09,
+			  EXT_ATTRIBUTE10,
+			  EXT_ATTR_ACUT1,
+			  EXT_ATTR_ACUT2,
+			  EXT_ATTR_ACUT3,
+			  EXT_ATRR_ACUT4,
+			  EXT_ATTR_ACUT5,
+			  EXT_ATTR_ACUT6,
+			  EXT_ATTR_ACUT7,
+			  EXT_ATTR_ACUT8,
+			  EXT_ATTR_ACUT9,
+			  EXT_ATTR_ACUT10
+		FROM YIVMT_NEWS_CODE
+		WHERE COMMON_CODE = #COMMON_CODE#
+		]]>
+	</select>
+	
+	<insert id="newsCodeTreeInsert" parameterClass="java.util.HashMap">
+		<![CDATA[
+		INSERT INTO YIVMT_NEWS_CODE
+		(
+			PARENT_COMMON_CODE,
+			COMMON_CODE_NAME,
+			COMMON_CODE_ORDER,
+			USE_YN
+		)
+		VALUES
+		(
+			#PARENT_COMMON_CODE#,
+			#COMMON_CODE_NAME#,
+			#COMMON_CODE_ORDER#,
+			'Y'
+		)
+		]]>
+		<selectKey keyProperty="COMMON_CODE" resultClass="Integer">
+			SELECT YIVMT_NEWS_CODE_SEQ.currval AS COMMON_CODE FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<update id="newsCodeTreeUpdate" parameterClass="java.util.HashMap">
+		<![CDATA[
+		UPDATE YIVMT_NEWS_CODE 
+		SET
+		  COMMON_CODE_NAME = #COMMON_CODE_NAME#,
+		  COMMON_CODE_DESC = #COMMON_CODE_DESC#,
+		  USE_YN = #USE_YN#,
+		  EXT_ATTRIBUTE01 = #EXT_ATTRIBUTE01#,
+		  EXT_ATTRIBUTE02 = #EXT_ATTRIBUTE02#,
+		  EXT_ATTRIBUTE03 = #EXT_ATTRIBUTE03#,
+		  EXT_ATTRIBUTE04 = #EXT_ATTRIBUTE04#,
+		  EXT_ATTRIBUTE05 = #EXT_ATTRIBUTE05#,
+		  EXT_ATTRIBUTE06 = #EXT_ATTRIBUTE06#,
+		  EXT_ATTRIBUTE07 = #EXT_ATTRIBUTE07#,
+		  EXT_ATTRIBUTE08 = #EXT_ATTRIBUTE08#,
+		  EXT_ATTRIBUTE09 = #EXT_ATTRIBUTE09#,
+		  EXT_ATTRIBUTE10 = #EXT_ATTRIBUTE10#,
+		  EXT_ATTR_ACUT1 = #EXT_ATTR_ACUT1#,
+		  EXT_ATTR_ACUT2 = #EXT_ATTR_ACUT2#,
+		  EXT_ATTR_ACUT3 = #EXT_ATTR_ACUT3#,
+		  EXT_ATTR_ACUT4 = #EXT_ATRR_ACUT4#,
+		  EXT_ATTR_ACUT5 = #EXT_ATTR_ACUT5#,
+		  EXT_ATTR_ACUT6 = #EXT_ATTR_ACUT6#,
+		  EXT_ATTR_ACUT7 = #EXT_ATTR_ACUT7#,
+		  EXT_ATTR_ACUT8 = #EXT_ATTR_ACUT8#,
+		  EXT_ATTR_ACUT9 = #EXT_ATTR_ACUT9#,
+		  EXT_ATTR_ACUT10 = #EXT_ATTR_ACUT10#
+		WHERE
+			COMMON_CODE = #COMMON_CODE#
+		]]>
+	</update>
+	
+	<update id="newsCodeTreeDndUpdate" parameterClass="java.util.HashMap">
+		<![CDATA[
+		UPDATE YIVMT_NEWS_CODE 
+		SET
+			COMMON_CODE_ORDER = #ORDER#
+		]]>
+		<isNotEmpty property="PARENT_COMMON_CODE">
+			,PARENT_COMMON_CODE = #PARENT_COMMON_CODE#
+		</isNotEmpty>
+		<![CDATA[
+		WHERE
+			COMMON_CODE = #COMMON_CODE#
+		]]>
+	</update>
+	    
+</sqlMap><?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+  "http://image1.dcbook.com/static_root/dtd/sql-map-2.dtd">
+  
+<sqlMap namespace="CodeManager">
+
+  
+	<select id="getCodeList" parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+		/*getCodeList*/			  
+		<![CDATA[
+	
+		SELECT
+			CODE,
+			CODENM,
+			UPER_CODE,
+			DLTE_YN,
+			CODE_EXPL
+			
+			FROM YIVMT_CODE
+		]]>		
+				
+				<dynamic prepend="WHERE">							
+					<isNotEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE = #UPER_CODE#
+		
+						]]>				
+					</isNotEmpty>
+					<isEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE IS NULL
+						]]>				
+					</isEmpty>
+				</dynamic>
+			
+			ORDER BY EXPS_ORDR
+		    
+		
+			
+		</select>
+			
+		<!-- 상세조회 -->
+		<select id="getCodeView"    parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			/* getCodeView */
+			<![CDATA[
+				
+			    SELECT 
+					   	CODE,
+						CODENM,
+						UPER_CODE,
+						CODE_DEPTH,
+						EXPS_ORDR,
+						DLTE_YN,
+						CODE_EXPL
+						
+				       
+				  FROM YIVMT_CODE
+				  WHERE CODE = #CODE#
+			]]>		
+			
+				
+				
+			
+		</select>
+		
+		<update id="codeManagerEdit" parameterClass="java.util.HashMap">
+			/* codeManagerEdit */
+			<![CDATA[			
+				UPDATE 
+						YIVMT_CODE				
+				SET	
+					
+					CODENM 		= #CODENM#, 
+					DLTE_YN 		= #DLTE_YN#, 
+					CODE_EXPL 		= #CODE_EXPL#, 
+					MODYMD 		= SYSDATE,
+					MODUSER 	= #MODUSER#
+					
+					WHERE CODE 		= #CODE#
+			]]>			
+		</update>	
+		
+	
+	  
+		
+		<insert id="codeManagerInsert"  parameterClass="java.util.HashMap">
+		/* codeInsert */
+				
+			INSERT INTO YIVMT_CODE 
+	       ( 
+	           CODE,
+		       CODENM,
+		       UPER_CODE,
+		       CODE_DEPTH,
+		       REGYMD,
+		       REGUSER,
+		       EXPS_ORDR,
+		       DLTE_YN,
+		       CODE_EXPL
+	       ) 
+	       VALUES 
+	       ( 
+	           #CODE#,
+	           #CODENM#,
+	           #UPER_CODE#,
+	           #CODE_DEPTH#,
+	           SYSDATE,
+	           #REGUSER#,
+	           #EXPS_ORDR#,
+	           #DLTE_YN#,
+	           #CODE_EXPL# 
+	       ) 
+		</insert>
+		
+		<update id="codeOrderEdit" parameterClass="java.util.HashMap">
+			/* codeOrderEdit */
+			<![CDATA[
+				UPDATE 
+						YIVMT_CODE				
+				SET
+						EXPS_ORDR 	= #EXPS_ORDR#
+				WHERE 	CODE =  #CODE#
+			]]>
+		</update>
+		
+		<select id="getMaxOrder"    parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			/*getMaxOrder*/		
+				  
+		<![CDATA[
+	
+		SELECT NVL(MAX(EXPS_ORDR), 0) + 1 AS MAX_ORDER
+			FROM YIVMT_CODE
+		]]>		
+				
+				<dynamic prepend="WHERE">							
+					<isNotEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE = #UPER_CODE#
+		
+						]]>				
+					</isNotEmpty>
+					<isEmpty prepend="AND" property="UPER_CODE">	
+						<![CDATA[
+							  UPER_CODE IS NULL
+						]]>				
+					</isEmpty>
+				</dynamic>
+			
+	    </select>
+	    <select id="existCode"    parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			/*existCode*/		
+		<![CDATA[
+				
+		SELECT COUNT(CODE) AS CODE_CNT
+			FROM YIVMT_CODE
+				WHERE CODE = #CODE#
+				
+			]]>			  
+	
+			
+	    </select>
+	
+	<select id="newsCodeTree" parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+			<![CDATA[
+			SELECT
+			  COMMON_CODE,
+			  PARENT_COMMON_CODE,
+			  COMMON_CODE_NAME,
+			  COMMON_CODE_DESC,
+			  COMMON_CODE_ORDER,
+			  LEVEL
+			FROM YIVMT_NEWS_CODE
+			START WITH PARENT_COMMON_CODE = 100071
+			CONNECT BY PRIOR COMMON_CODE = PARENT_COMMON_CODE
+			ORDER SIBLINGS BY COMMON_CODE_ORDER
+			]]>
+	</select>
+	
+	<select id="newsCodeItem" parameterClass="java.util.HashMap" resultClass="kr.yhp.common.DataMap">
+		<![CDATA[
+		SELECT
+			  COMMON_CODE,
+			  PARENT_COMMON_CODE,
+			  COMMON_CODE_NAME,
+			  COMMON_CODE_DESC,
+			  COMMON_CODE_ORDER,
+			  USE_YN,
+			  EXT_ATTRIBUTE01,
+			  EXT_ATTRIBUTE02,
+			  EXT_ATTRIBUTE03,
+			  EXT_ATTRIBUTE04,
+			  EXT_ATTRIBUTE05,
+			  EXT_ATTRIBUTE06,
+			  EXT_ATTRIBUTE07,
+			  EXT_ATTRIBUTE08,
+			  EXT_ATTRIBUTE09,
+			  EXT_ATTRIBUTE10,
+			  EXT_ATTR_ACUT1,
+			  EXT_ATTR_ACUT2,
+			  EXT_ATTR_ACUT3,
+			  EXT_ATRR_ACUT4,
+			  EXT_ATTR_ACUT5,
+			  EXT_ATTR_ACUT6,
+			  EXT_ATTR_ACUT7,
+			  EXT_ATTR_ACUT8,
+			  EXT_ATTR_ACUT9,
+			  EXT_ATTR_ACUT10
+		FROM YIVMT_NEWS_CODE
+		WHERE COMMON_CODE = #COMMON_CODE#
+		]]>
+	</select>
+	
+	<insert id="newsCodeTreeInsert" parameterClass="java.util.HashMap">
+		<![CDATA[
+		INSERT INTO YIVMT_NEWS_CODE
+		(
+			PARENT_COMMON_CODE,
+			COMMON_CODE_NAME,
+			COMMON_CODE_ORDER,
+			USE_YN
+		)
+		VALUES
+		(
+			#PARENT_COMMON_CODE#,
+			#COMMON_CODE_NAME#,
+			#COMMON_CODE_ORDER#,
+			'Y'
+		)
+		]]>
+		<selectKey keyProperty="COMMON_CODE" resultClass="Integer">
+			SELECT YIVMT_NEWS_CODE_SEQ.currval AS COMMON_CODE FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<update id="newsCodeTreeUpdate" parameterClass="java.util.HashMap">
+		<![CDATA[
+		UPDATE YIVMT_NEWS_CODE 
+		SET
+		  COMMON_CODE_NAME = #COMMON_CODE_NAME#,
+		  COMMON_CODE_DESC = #COMMON_CODE_DESC#,
+		  USE_YN = #USE_YN#,
+		  EXT_ATTRIBUTE01 = #EXT_ATTRIBUTE01#,
+		  EXT_ATTRIBUTE02 = #EXT_ATTRIBUTE02#,
+		  EXT_ATTRIBUTE03 = #EXT_ATTRIBUTE03#,
+		  EXT_ATTRIBUTE04 = #EXT_ATTRIBUTE04#,
+		  EXT_ATTRIBUTE05 = #EXT_ATTRIBUTE05#,
+		  EXT_ATTRIBUTE06 = #EXT_ATTRIBUTE06#,
+		  EXT_ATTRIBUTE07 = #EXT_ATTRIBUTE07#,
+		  EXT_ATTRIBUTE08 = #EXT_ATTRIBUTE08#,
+		  EXT_ATTRIBUTE09 = #EXT_ATTRIBUTE09#,
+		  EXT_ATTRIBUTE10 = #EXT_ATTRIBUTE10#,
+		  EXT_ATTR_ACUT1 = #EXT_ATTR_ACUT1#,
+		  EXT_ATTR_ACUT2 = #EXT_ATTR_ACUT2#,
+		  EXT_ATTR_ACUT3 = #EXT_ATTR_ACUT3#,
+		  EXT_ATTR_ACUT4 = #EXT_ATRR_ACUT4#,
+		  EXT_ATTR_ACUT5 = #EXT_ATTR_ACUT5#,
+		  EXT_ATTR_ACUT6 = #EXT_ATTR_ACUT6#,
+		  EXT_ATTR_ACUT7 = #EXT_ATTR_ACUT7#,
+		  EXT_ATTR_ACUT8 = #EXT_ATTR_ACUT8#,
+		  EXT_ATTR_ACUT9 = #EXT_ATTR_ACUT9#,
+		  EXT_ATTR_ACUT10 = #EXT_ATTR_ACUT10#
+		WHERE
+			COMMON_CODE = #COMMON_CODE#
+		]]>
+	</update>
+	
+	<update id="newsCodeTreeDndUpdate" parameterClass="java.util.HashMap">
+		<![CDATA[
+		UPDATE YIVMT_NEWS_CODE 
+		SET
+			COMMON_CODE_ORDER = #ORDER#
+		]]>
+		<isNotEmpty property="PARENT_COMMON_CODE">
+			,PARENT_COMMON_CODE = #PARENT_COMMON_CODE#
+		</isNotEmpty>
+		<![CDATA[
+		WHERE
+			COMMON_CODE = #COMMON_CODE#
+		]]>
+	</update>
+	    
+</sqlMap>
